@@ -14,3 +14,4 @@ server:$(o_outils) $(libf)
 	gcc $(CFLAGS) -c $< -o $@
 %.a:
 	make $(libf_dir)
+
