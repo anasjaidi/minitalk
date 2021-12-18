@@ -6,7 +6,7 @@
 /*   By: ajaidi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 19:23:13 by ajaidi            #+#    #+#             */
-/*   Updated: 2021/12/16 19:23:36 by ajaidi           ###   ########.fr       */
+/*   Updated: 2021/12/18 16:27:35 by ajaidi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,59 +15,49 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void	send_signal(char *str, int pid)
+
+void	send_byte(char byte, int pid)
+{
+
+	int	j;
+
+	j = 7;
+	while (j >= 0)
+	{
+		if (byte >> j & 1)
+			kill(pid, SIGUSR2);
+		else
+			kill(pid, SIGUSR1);
+		usleep(500);
+		j--;
+	}
+}
+
+void	send_message(char *str, int pid)
 {
 	int	i;
 
 	i = -1;
 	while (str[++i])
-	{
-		if (str[i] == 48)
-			kill(pid, SIGUSR1);
-		else
-			kill(pid, SIGUSR2);
-		usleep(500);
-	}
+		send_byte(str[i], pid);
+	send_byte(0, pid);
 }
 
-char	*convert(char c)
+void	usage(void)
 {
-	int		x;
-	char	*bin;
-	int		i;
-
-	i = 8;
-	x = c;
-	bin = malloc(10);
-	bin[9] = 0;
-	if (c < 0)
-		bin[0] = '1';
-	else
-		bin[0] = '0';
-	while (x)
-	{
-		bin[i] = (x % 2) + 48;
-		x /= 2;
-		i--;
-	}
-	while (i > 0)
-	{
-		bin[i] = 48;
-		i--;
-	}
-	return (bin);
+	printf("./client [server-pid] [message]\n");
+	exit(0);
 }
 
-int	main(int argc, char *argv[])
+int	main(int ac, char *av[])
 {
-	int		i;
-	char	*str;
+	int		server_pid;
+	char	*msg;
 
-	i = -1;
-	while (argv[2][++i])
-	{
-		str = convert(argv[2][i]);
-		send_signal(str, atoi(argv[1]));
-	}
+	if (ac != 3)
+		usage();
+	server_pid = atoi(av[1]);
+	msg = av[2];
+	send_message(msg, server_pid);
 	return (0);
 }
