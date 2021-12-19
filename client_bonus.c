@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ajaidi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "minitalk_bonus.h"
 
 void	send_byte(char byte, int pid)
 {
@@ -35,6 +35,7 @@ void	send_message(char *str, int pid)
 	i = -1;
 	while (str[++i])
 		send_byte(str[i], pid);
+	send_byte(0, pid);
 }
 
 void	usage(void)
@@ -43,11 +44,17 @@ void	usage(void)
 	exit(0);
 }
 
+void	handler2(int sig)
+{
+	ft_putstr("every thing it's all right");
+}
+
 int	main(int ac, char *av[])
 {
 	int		server_pid;
 	char	*msg;
 
+	signal(SIGUSR2, handler2);
 	if (ac != 3)
 		usage();
 	server_pid = ft_atoi(av[1]);

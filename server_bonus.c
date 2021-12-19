@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   server_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ajaidi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "minitalk_bonus.h"
 
 t_data	g_data;
 
@@ -31,6 +31,8 @@ void	handler(int sig, siginfo_t *info, void *ucontext)
 	g_data.i++;
 	if (g_data.i == 8)
 	{
+		if (g_data.x == 0)
+			kill(info->si_pid, SIGUSR2);
 		write(1, &g_data.x, 1);
 		reset_data();
 	}
